@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: bombcrypto-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./bombcrypto-server-v2/server/db:/docker-entrypoint-initdb.d/server-db
+
+  redis:
+    image: redis:8
+    container_name: bombcrypto-redis
+    ports:
+      - "6379:6379"
+
+  hardhat-node:
+    image: node:22-bullseye
+    container_name: bombcrypto-hardhat
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-contract-v2/base-hardhat:/app
+      - hardhat-node_modules:/app/node_modules
+    command: sh -c "npm install && npx hardhat node"
+    ports:
+      - "8545:8545"
+
+  ap-login:
+    image: node:22-bullseye
+    container_name: bombcrypto-ap-login
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-server-v2/api/login:/app
+      - ap-login_node_modules:/app/node_modules
+    command: sh -c "npm install && npm start"
+    ports:
+      - "8120:8120"
+    depends_on:
+      - postgres
+      - redis
+
+  ap-market:
+    image: node:22-bullseye
+    container_name: bombcrypto-ap-market
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-server-v2/api/market:/app
+      - ap-market_node_modules:/app/node_modules
+    command: sh -c "npm install && npm start"
+    ports:
+      - "9120:9120"
+    depends_on:
+      - postgres
+      - redis
+
+  sfs-game-1:
+    build:
+      context: ./bombcrypto-server-v2/server/deploy
+      dockerfile: Dockerfile.arm64
+    container_name: bombcrypto-sfs-game-1
+    env_file: ./bombcrypto-server-v2/server/.env.example
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "9933:9933/tcp"
+      - "9933:9933/udp"
+      - "9898:9898"
+    environment:
+      IS_DEBUG: "1"
+      IS_PVP_SERVER: "0"
+      IS_GAME_SERVER: "1"
+      MAX_CCU: "100"
+      HTTP_PORT: "8080"
+      HTTPS_PORT: "8443"
+      MAX_CONNECTIONS_PER_IP: "50"
+      SERVER_NAME: 'sfs-game-1'
+      LICENSE_CODE: ''
+      CREDENTIALS: 'bombcryptodev,123456'
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./bombcrypto-server-v2/server/deploy/SmartFoxServer_2X:/opt/SmartFoxServer_2X_Patch:ro
+      - ./client_logs:/opt/SmartFoxServer_2X/SFS2X/clientLogs:rw
+      - ./extensions_volume:/opt/SmartFoxServer_2X/SFS2X/extensions:rw
+
+  market-frontend:
+    image: node:22-bullseye
+    container_name: bombcrypto-market-frontend
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-market-v2/frontend:/app
+      - market-frontend_node_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+
+  market-api:
+    image: node:22-bullseye
+    container_name: bombcrypto-market-api
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-market-v2/backend:/app
+      - market-api_node_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev:api:bsc"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+
+  detect-transfer:
+    image: node:22-bullseye
+    container_name: bombcrypto-detect-transfer
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-market-v2/detect-transfer:/app
+      - detect-transfer_node_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - postgres
+      - redis
+
+  blockchain-center-api:
+    image: node:22-bullseye
+    container_name: bombcrypto-blockchain-center
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-market-v2/blockchain-center-api:/app
+      - blockchain-center_node_modules:/app/node_modules
+    command: sh -c "npm install && npx nodemon server.js"
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  hardhat-node_modules:
+  ap-login_node_modules:
+  ap-market_node_modules:
+  market-frontend_node_modules:
+  market-api_node_modules:
+  detect-transfer_node_modules:
+  blockchain-center_node_modules:
