@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+cd /d "%~dp0\.."
+
 echo Copying .env.example files to .env where .env is missing...
 for /R %%f in (.env.example) do (
     set "example=%%f"

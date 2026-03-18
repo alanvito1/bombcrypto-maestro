@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ensure running from root if script is directly executed
+cd "$(dirname "$0")/.."
+
 echo "Copying .env.example files to .env where .env is missing..."
 find . -type f -name ".env.example" | while read -r example; do
     env="${example%.example}"

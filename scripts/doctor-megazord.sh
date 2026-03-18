@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Vai para o root do projeto
+cd "$(dirname "$0")/.."
+
 echo "=========================================================="
 echo "🩺 MEGAZORD DOCTOR: Health Diagnostics & Pre-Flight Checks 🩺"
 echo "=========================================================="
@@ -21,7 +24,7 @@ done
 if [ $OCCUPIED_PORTS -gt 0 ]; then
     echo ""
     echo "⚠️  WARNING: Found $OCCUPIED_PORTS occupied ports."
-    echo "💡 TIP: Run './clean-megazord.sh' to terminate zombie processes before starting the Megazord."
+    echo "💡 TIP: Run './scripts/clean-megazord.sh' to terminate zombie processes before starting the Megazord."
 else
     echo "✅ ALL CLEAR: All essential ports are free."
 fi
@@ -37,7 +40,7 @@ fi
 UP_CONTAINERS=$(docker ps | grep 'Up' | grep 'bombcrypto')
 if [ -z "$UP_CONTAINERS" ]; then
     echo "⚠️  WARNING: No running BombCrypto Docker containers found."
-    echo "💡 TIP: Run './start-megazord.sh' to boot the ecosystem."
+    echo "💡 TIP: Run './scripts/start-megazord.sh' to boot the ecosystem."
 else
     echo "✅ RUNNING CONTAINERS DETECTED:"
     echo "$UP_CONTAINERS" | awk '{print "   - " $NF}'

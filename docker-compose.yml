@@ -12,7 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - ./bombcrypto-server-v2/server/db:/docker-entrypoint-initdb.d/server-db
 
   redis:

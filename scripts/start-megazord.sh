@@ -5,10 +5,13 @@
 # ==========================================
 echo "Iniciando a sequencia de boot do ecossistema Bomb Crypto V2..."
 
+# Vai para o root do projeto garantindo que funcione de qualquer pasta
+cd "$(dirname "$0")/.."
+
 # 1. Configurar variaveis de ambiente (.env)
 echo "----------------------------------------"
 echo "🔧 Passo 1: Configurando variaveis de ambiente..."
-./init-bomb.sh
+./scripts/init-bomb.sh
 
 # 2. Subir infraestrutura Base (Bancos, Hardhat, Server, Market, etc)
 echo "----------------------------------------"

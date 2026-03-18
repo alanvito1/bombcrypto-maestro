@@ -5,6 +5,9 @@ echo "🧹 TERRA ARRASADA: Cleaning up the Megazord Environment 🧹"
 echo "=========================================================="
 echo ""
 
+# Vai para o root do projeto
+cd "$(dirname "$0")/.."
+
 # 1. Bring down docker compose with volumes
 echo "🐳 Stopping Docker containers and removing volumes..."
 docker compose down -v
