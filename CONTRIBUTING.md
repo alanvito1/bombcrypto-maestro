@@ -2,6 +2,15 @@
 
 Welcome, Developer. This document contains the guiding principles and rules for contributing to the **Bomb Crypto V2 Megazord**.
 
+## 🏗️ Architectural Rules
+
+### The Twin Scripts Rule
+Any changes to the infrastructure, boot sequence, or clean-up flows MUST be identically replicated across both ecosystems:
+- Mac/Linux environment: `/scripts/*.sh`
+- Windows environment: `/scripts/*.bat`
+
+This guarantees that our ecosystem can be brought up natively on any machine without relying on WSL or separate tools, maintaining cross-platform parity.
+
 ## 🛡️ The Golden Rule: Sub-Repository Isolation
 
 1. **The Hub (Root) is the Brain**: All orchestration scripts (`start-megazord.sh`, `doctor-megazord.sh`, `clean-megazord.sh`), global configurations (`docker-compose.yml`), and system architecture documentation MUST reside in the Root (`/bomb`).

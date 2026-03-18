@@ -27,6 +27,8 @@ Booting the entire ecosystem is just one command away:
 .\scripts\start-megazord.bat
 ```
 
+> **Note (Pre-Flight Git Sync):** The boot scripts now include an automatic "Pre-Flight Git Sync" step. This ensures that your sub-repositories (`client`, `server`, `market`) are always pulled and updated to the latest main branch before the ecosystem boots up, guaranteeing you are running the most current code. If a sync fails due to local changes, you will be prompted to either abort or continue with your local modifications.
+
 **Access Points:**
 - **🎮 Unity WebGL Client:** [http://localhost:5174](http://localhost:5174)
 - **🌐 Marketplace Frontend:** [http://localhost:5173](http://localhost:5173)
