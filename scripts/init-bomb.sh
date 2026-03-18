@@ -63,14 +63,10 @@ done
 CLIENT_ENV="bombcrypto-client-v2/unity-web-template/.env"
 if [ -f "$CLIENT_ENV" ]; then
     echo -e "${CYAN}Injecting VITE_API_HOST into $CLIENT_ENV...${NC}"
-    # Replace the host using sed (macOS and Linux compatible)
-    if sed --version >/dev/null 2>&1; then
-        # GNU sed
-        sed -i 's|^VITE_API_HOST=.*|VITE_API_HOST="http://localhost:8120/web"|g' "$CLIENT_ENV"
-    else
-        # BSD sed (macOS)
-        sed -i '' 's|^VITE_API_HOST=.*|VITE_API_HOST="http://localhost:8120/web"|g' "$CLIENT_ENV"
-    fi
+    # Remove existing definitions and append the new one
+    grep -v "^VITE_API_HOST=" "$CLIENT_ENV" > "$CLIENT_ENV.tmp"
+    mv "$CLIENT_ENV.tmp" "$CLIENT_ENV"
+    echo 'VITE_API_HOST="http://localhost:8120/web"' >> "$CLIENT_ENV"
     echo -e "${GREEN}Injection complete.${NC}"
 fi
 

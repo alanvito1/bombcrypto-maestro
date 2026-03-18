@@ -53,7 +53,9 @@ rem Inject VITE_API_HOST into client .env
 set "CLIENT_ENV=bombcrypto-client-v2\unity-web-template\.env"
 if exist "%CLIENT_ENV%" (
     echo %CYAN%Injecting VITE_API_HOST into %CLIENT_ENV%...%NC%
-    powershell -Command "(Get-Content -Path '%CLIENT_ENV%') -replace '^VITE_API_HOST=.*', 'VITE_API_HOST=\"http://localhost:8120/web\"' | Set-Content -Path '%CLIENT_ENV%'"
+    findstr /V /I "^VITE_API_HOST=" "%CLIENT_ENV%" > "%CLIENT_ENV%.tmp"
+    move /Y "%CLIENT_ENV%.tmp" "%CLIENT_ENV%" > nul
+    echo VITE_API_HOST="http://localhost:8120/web">> "%CLIENT_ENV%"
     echo %GREEN%Injection complete.%NC%
 )
 
