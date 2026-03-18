@@ -11,6 +11,11 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
@@ -54,8 +59,10 @@ services:
     ports:
       - "8120:8120"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   ap-market:
     image: node:22-bullseye
@@ -72,8 +79,10 @@ services:
     ports:
       - "9120:9120"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   sfs-game-1:
     build:
@@ -136,8 +145,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   detect-transfer:
     image: node:22-bullseye
@@ -153,8 +164,10 @@ services:
       DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
       POSTGRES_URL: "postgresql://postgres:password@postgres:5432/bombcrypto"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   blockchain-center-api:
     image: node:22-bullseye
@@ -171,8 +184,10 @@ services:
     ports:
       - "3003:3003"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
 volumes:
   hardhat-node_modules:

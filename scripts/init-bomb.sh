@@ -59,9 +59,28 @@ for dir in "${DIRS[@]}"; do
     fi
 done
 
+# --- WebGL Asset Injection ---
+echo -e "${CYAN}[AVRE] 🌹 Checking for WebGL assets in /game-assets/webgl/...${NC}"
+if [ -d "./game-assets/webgl" ]; then
+    echo -e "${GREEN}[AVRE] ❤️ WebGL assets found! Injecting into bombcrypto-client-v2...${NC}"
+    mkdir -p "bombcrypto-client-v2/unity-web-template/public/webgl/build"
+    cp -r ./game-assets/webgl/* "bombcrypto-client-v2/unity-web-template/public/webgl/build/"
+else
+    echo -e "${RED}[AVRE] ⚠️ WARNING: WebGL assets not found in /game-assets/webgl/. Game will not render.${NC}"
+fi
+# -----------------------------
+
 # Use Vite .env.local trick for Unity WebGL Client to bypass config conflicts
-echo -e "${CYAN}Creating .env.local for Client with VITE_API_HOST...${NC}"
-echo 'VITE_API_HOST="http://localhost:8120/web"' > bombcrypto-client-v2/unity-web-template/.env.local
+echo -e "${CYAN}Creating .env.local for Client with VITE_API_HOST and Unity config...${NC}"
+cat <<EOF > bombcrypto-client-v2/unity-web-template/.env.local
+VITE_API_HOST="http://localhost:8120/web"
+VITE_UNITY_FOLDER=./webgl/build
+VITE_LOADER_URL_EXTENSION=/webgl.loader.js
+VITE_DATA_URL_EXTENSION=/webgl.data
+VITE_DATA_URL_MOBILE_EXTENSION=/mobile.data.br
+VITE_FRAMEWORK_URL_EXTENSION=/webgl.framework.js
+VITE_CODE_URL_EXTENSION=/webgl.wasm
+EOF
 echo -e "${GREEN}.env.local trick applied successfully.${NC}"
 
 echo ""
