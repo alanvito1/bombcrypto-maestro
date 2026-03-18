@@ -49,15 +49,10 @@ for %%d in (%DIRS%) do (
     )
 )
 
-rem Inject VITE_API_HOST into client .env
-set "CLIENT_ENV=bombcrypto-client-v2\unity-web-template\.env"
-if exist "%CLIENT_ENV%" (
-    echo %CYAN%Injecting VITE_API_HOST into %CLIENT_ENV%...%NC%
-    findstr /V /I "^VITE_API_HOST=" "%CLIENT_ENV%" > "%CLIENT_ENV%.tmp"
-    move /Y "%CLIENT_ENV%.tmp" "%CLIENT_ENV%" > nul
-    echo VITE_API_HOST="http://localhost:8120/web">> "%CLIENT_ENV%"
-    echo %GREEN%Injection complete.%NC%
-)
+rem Use Vite .env.local trick for Unity WebGL Client to bypass config conflicts
+echo %CYAN%Creating .env.local for Client with VITE_API_HOST...%NC%
+echo VITE_API_HOST="http://localhost:8120/web" > bombcrypto-client-v2\unity-web-template\.env.local
+echo %GREEN%.env.local trick applied successfully.%NC%
 
 echo.
 echo %CYAN%NOTE: Ensure all Blockchain RPC URLs in your .env files are pointed to:%NC%
