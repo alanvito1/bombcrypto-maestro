@@ -32,6 +32,10 @@ for %%r in (%REPOS%) do (
         echo %WHITE%[AVRE] 📂 Verificando %%r...%NC%
         cd "%%r"
 
+        rem 🐙 FAIL-SAFE GIT SYNC: Clean any uncommitted changes or untracked files
+        git checkout . >nul 2>&1
+        git clean -fd >nul 2>&1
+
         if "%%r" == "bombcrypto-client-v2" (
             git fetch >nul 2>&1
             git checkout dev/version2_1 >nul 2>&1
