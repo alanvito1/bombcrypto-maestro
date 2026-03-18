@@ -1,0 +1,3 @@
+CREATE DATABASE backend;
+CREATE DATABASE bombcrypto2;
+CREATE DATABASE bombcrypto;

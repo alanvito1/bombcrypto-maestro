@@ -66,10 +66,10 @@ if [ -f "$CLIENT_ENV" ]; then
     # Replace the host using sed (macOS and Linux compatible)
     if sed --version >/dev/null 2>&1; then
         # GNU sed
-        sed -i 's|VITE_API_HOST="your-api-host"|VITE_API_HOST="http://localhost:8120/web/bsc"|g' "$CLIENT_ENV"
+        sed -i 's|^VITE_API_HOST=.*|VITE_API_HOST="http://localhost:8120/web"|g' "$CLIENT_ENV"
     else
         # BSD sed (macOS)
-        sed -i '' 's|VITE_API_HOST="your-api-host"|VITE_API_HOST="http://localhost:8120/web/bsc"|g' "$CLIENT_ENV"
+        sed -i '' 's|^VITE_API_HOST=.*|VITE_API_HOST="http://localhost:8120/web"|g' "$CLIENT_ENV"
     fi
     echo -e "${GREEN}Injection complete.${NC}"
 fi
