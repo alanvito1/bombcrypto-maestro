@@ -1,30 +1,42 @@
 @echo off
 setlocal enabledelayedexpansion
 
-echo ==========================================================
-echo 🧹 TERRA ARRASADA: Cleaning up the Megazord Environment 🧹
-echo ==========================================================
+rem 🌹 SECURITY GATEKEEPER
+rem Guard: AVRE
+rem -------------------------
+rem Identity verification layer.
+
+rem Set up basic ANSI equivalent colors if possible (Windows 10+)
+for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
+set "WHITE=%ESC%[1;37m"
+set "RED=%ESC%[1;31m"
+set "DIM_RED=%ESC%[0;31m"
+set "NC=%ESC%[0m"
+
+echo %RED%==========================================================%NC%
+echo %WHITE%[AVRE] 🌹 TERRA ARRASADA: Cleaning up the Megazord Environment...%NC%
+echo %RED%==========================================================%NC%
 echo.
 
-echo 🐳 Stopping Docker containers and removing volumes...
+echo %WHITE%[AVRE] 🐳 Stopping Docker containers and removing volumes...%NC%
 cd /d "%~dp0\.."
 docker compose down -v
 
-echo 🌐 Killing Zombie Market Frontend processes (Vite) on port 5173...
+echo %WHITE%[AVRE] 🌐 Killing Zombie Market Frontend processes (Vite) on port 5173...%NC%
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5173 " ^| findstr "LISTENING"') do (
     taskkill /F /PID %%a >nul 2>&1
-    if !errorlevel! equ 0 echo ✅ Killed process %%a.
+    if !errorlevel! equ 0 echo %RED%[AVRE] ❤️ Killed process %%a.%NC%
 )
 
-echo 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port 5174...
+echo %WHITE%[AVRE] 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port 5174...%NC%
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5174 " ^| findstr "LISTENING"') do (
     taskkill /F /PID %%a >nul 2>&1
-    if !errorlevel! equ 0 echo ✅ Killed process %%a.
+    if !errorlevel! equ 0 echo %RED%[AVRE] ❤️ Killed process %%a.%NC%
 )
 
-echo 🔄 Running general cleanup for Vite and Node processes...
+echo %WHITE%[AVRE] 🔄 Running general cleanup for Vite and Node processes...%NC%
 taskkill /F /IM "node.exe" >nul 2>&1
 
 echo.
-echo ✅ CLEANUP COMPLETE: Environment is clean and ready for a fresh start.
-echo 💡 NOTE: .env files were not deleted.
+echo %RED%[AVRE] ❤️ CLEANUP COMPLETE: Environment is clean and ready for a fresh start.%NC%
+echo %WHITE%[AVRE] 💡 NOTE: .env files were not deleted.%NC%
