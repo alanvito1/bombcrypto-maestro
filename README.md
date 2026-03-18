@@ -17,15 +17,46 @@ Welcome to the **Hub Megazord**, the centralized orchestration repository for th
 
 Booting the entire ecosystem is just one command away:
 
+**Para Mac/Linux:**
 ```bash
-./start-megazord.sh
+./scripts/start-megazord.sh
+```
+
+**Para Windows:**
+```cmd
+.\scripts\start-megazord.bat
 ```
 
 **Access Points:**
 - **🎮 Unity WebGL Client:** [http://localhost:5174](http://localhost:5174)
 - **🌐 Marketplace Frontend:** [http://localhost:5173](http://localhost:5173)
 
-For detailed local play instructions, refer to `COMO_JOGAR_LOCAL.md` or `local-megazord-setup.md`.
+For detailed local play instructions, refer to `docs/COMO_JOGAR_LOCAL.md` or `docs/local-megazord-setup.md`.
+
+---
+
+## 📂 Hub Architecture
+
+```text
+/bomb (Root)
+├── /scripts
+│   ├── start-megazord.sh / .bat
+│   ├── doctor-megazord.sh / .bat
+│   ├── clean-megazord.sh / .bat
+│   └── ...
+├── /docs
+│   ├── SYSTEM_ATLAS.md
+│   └── ...
+├── /audits
+│   ├── /infra
+│   ├── /security
+│   ├── /contracts
+│   └── /gameplay
+├── /archive
+├── bombcrypto-client-v2/ (Submodule)
+├── bombcrypto-server-v2/ (Submodule)
+└── bombcrypto-market-v2/ (Submodule)
+```
 
 ---
 
@@ -100,11 +131,11 @@ sequenceDiagram
 
 Need to diagnose or clean the environment? Use the Hub's built-in tools:
 
-- `./doctor-megazord.sh`: Runs a health diagnostic on your Docker daemon, checks if all required ports are free, and lists running containers.
-- `./clean-megazord.sh`: The **Terra Arrasada** protocol. Stops all containers, wipes the databases/volumes, and kills any zombie Vite or Node processes lingering on ports `5173` or `5174`.
+- `./scripts/doctor-megazord.sh`: Runs a health diagnostic on your Docker daemon, checks if all required ports are free, and lists running containers.
+- `./scripts/clean-megazord.sh`: The **Terra Arrasada** protocol. Stops all containers, wipes the databases/volumes, and kills any zombie Vite or Node processes lingering on ports `5173` or `5174`.
 
 ## 📚 Knowledge Base
 
-- [SYSTEM_ATLAS.md](SYSTEM_ATLAS.md) - The complete inventory of DB tables, API endpoints, and Magic Numbers.
+- [docs/SYSTEM_ATLAS.md](docs/SYSTEM_ATLAS.md) - The complete inventory of DB tables, API endpoints, and Magic Numbers.
 - [CONTRIBUTING.md](CONTRIBUTING.md) - The developer manifesto and Sub-Repository isolation rules.
-- [.scribe/journal.md](.scribe/journal.md) - Technical risks and observations log.
+- [audits/infra/journal.md](audits/infra/journal.md) - Technical risks and observations log.
