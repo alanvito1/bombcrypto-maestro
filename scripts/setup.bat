@@ -41,6 +41,19 @@ if exist "%CLIENT_ENV%" (
     echo %GREEN%Injection complete.%NC%
 )
 
+rem Apply Hotfixes to Backend .env files
+echo %CYAN%Applying Runtime Hotfixes to Backend .env files...%NC%
+set "BACKEND_DIRS=bombcrypto-server-v2\api\login bombcrypto-server-v2\api\market bombcrypto-server-v2\server bombcrypto-market-v2\backend bombcrypto-market-v2\detect-transfer"
+
+for %%d in (%BACKEND_DIRS%) do (
+    set "ENV_FILE=%%d\.env"
+    if exist "!ENV_FILE!" (
+        echo %CYAN%Patching !ENV_FILE!...%NC%
+        powershell -Command "$content = Get-Content -Path '!ENV_FILE!'; $content = $content -replace 'OBFUSCATE_BYTES_APPEND=\"\"', 'OBFUSCATE_BYTES_APPEND=0'; $content = $content -replace 'DB_HOST=\"*127\.0\.0\.1\"*', 'DB_HOST=\"postgres\"'; $content = $content -replace 'DB_HOST=\"*localhost\"*', 'DB_HOST=\"postgres\"'; $content = $content -replace 'DATABASE_URL=\"*postgresql://[^:]*:[^@]*@127\.0\.0\.1', 'DATABASE_URL=\"postgresql://postgres:postgres@postgres'; $content = $content -replace 'DATABASE_URL=\"*postgresql://[^:]*:[^@]*@localhost', 'DATABASE_URL=\"postgresql://postgres:postgres@postgres'; $content = $content -replace 'REDIS_HOST=\"*127\.0\.0\.1\"*', 'REDIS_HOST=\"redis\"'; $content = $content -replace 'REDIS_HOST=\"*localhost\"*', 'REDIS_HOST=\"redis\"'; Set-Content -Path '!ENV_FILE!' -Value $content"
+    )
+)
+echo %GREEN%Hotfixes applied.%NC%
+
 echo.
 echo %CYAN%NOTE: Ensure all Blockchain RPC URLs in your .env files are pointed to:%NC%
 echo %CYAN%http://bombcrypto-hardhat:8545 (or http://localhost:8545 locally)%NC%

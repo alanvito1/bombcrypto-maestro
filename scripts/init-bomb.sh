@@ -58,6 +58,44 @@ if [ -f "$CLIENT_ENV" ]; then
     echo -e "${GREEN}Injection complete.${NC}"
 fi
 
+# Apply Hotfixes to Backend .env files
+echo -e "${CYAN}Applying Runtime Hotfixes to Backend .env files...${NC}"
+
+BACKEND_DIRS=(
+    "bombcrypto-server-v2/api/login"
+    "bombcrypto-server-v2/api/market"
+    "bombcrypto-server-v2/server"
+    "bombcrypto-market-v2/backend"
+    "bombcrypto-market-v2/detect-transfer"
+)
+
+for dir in "${BACKEND_DIRS[@]}"; do
+    ENV_FILE="$dir/.env"
+    if [ -f "$ENV_FILE" ]; then
+        echo -e "${CYAN}Patching $ENV_FILE...${NC}"
+        if sed --version >/dev/null 2>&1; then
+            # GNU sed
+            sed -i 's/OBFUSCATE_BYTES_APPEND=""/OBFUSCATE_BYTES_APPEND=0/g' "$ENV_FILE"
+            sed -i 's/DB_HOST="*127\.0\.0\.1"*/DB_HOST="postgres"/g' "$ENV_FILE"
+            sed -i 's/DB_HOST="*localhost"*/DB_HOST="postgres"/g' "$ENV_FILE"
+            sed -i 's/DATABASE_URL="*postgresql:\/\/[^:]*:[^@]*@127\.0\.0\.1/DATABASE_URL="postgresql:\/\/postgres:postgres@postgres/g' "$ENV_FILE"
+            sed -i 's/DATABASE_URL="*postgresql:\/\/[^:]*:[^@]*@localhost/DATABASE_URL="postgresql:\/\/postgres:postgres@postgres/g' "$ENV_FILE"
+            sed -i 's/REDIS_HOST="*127\.0\.0\.1"*/REDIS_HOST="redis"/g' "$ENV_FILE"
+            sed -i 's/REDIS_HOST="*localhost"*/REDIS_HOST="redis"/g' "$ENV_FILE"
+        else
+            # BSD sed
+            sed -i '' 's/OBFUSCATE_BYTES_APPEND=""/OBFUSCATE_BYTES_APPEND=0/g' "$ENV_FILE"
+            sed -i '' 's/DB_HOST="*127\.0\.0\.1"*/DB_HOST="postgres"/g' "$ENV_FILE"
+            sed -i '' 's/DB_HOST="*localhost"*/DB_HOST="postgres"/g' "$ENV_FILE"
+            sed -i '' 's/DATABASE_URL="*postgresql:\/\/[^:]*:[^@]*@127\.0\.0\.1/DATABASE_URL="postgresql:\/\/postgres:postgres@postgres/g' "$ENV_FILE"
+            sed -i '' 's/DATABASE_URL="*postgresql:\/\/[^:]*:[^@]*@localhost/DATABASE_URL="postgresql:\/\/postgres:postgres@postgres/g' "$ENV_FILE"
+            sed -i '' 's/REDIS_HOST="*127\.0\.0\.1"*/REDIS_HOST="redis"/g' "$ENV_FILE"
+            sed -i '' 's/REDIS_HOST="*localhost"*/REDIS_HOST="redis"/g' "$ENV_FILE"
+        fi
+    fi
+done
+echo -e "${GREEN}Hotfixes applied.${NC}"
+
 echo ""
 echo -e "${CYAN}NOTE: Ensure all Blockchain RPC URLs in your .env files are pointed to:${NC}"
 echo -e "${CYAN}http://bombcrypto-hardhat:8545 (or http://localhost:8545 locally)${NC}"
