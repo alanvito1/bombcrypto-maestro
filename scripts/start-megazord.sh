@@ -37,24 +37,43 @@ for repo in "${REPOS[@]}"; do
         echo -e "${WHITE}[AVRE] 📂 Verificando $repo...${NC}"
         cd "$repo" || continue
 
-        # Tentar checkout na main, se falhar tenta na master
-        if ! git checkout main 2>/dev/null; then
-            git checkout master 2>/dev/null
-        fi
+        if [ "$repo" = "bombcrypto-client-v2" ]; then
+            git fetch 2>/dev/null
+            git checkout dev/version2_1 2>/dev/null
 
-        # Tentar pull
-        if ! git pull > /dev/null 2>&1; then
-            echo -e "${DIM_RED}[AVRE] 🥀 Check this... Sync failed in $repo.${NC}"
-            while true; do
-                read -p "Abort boot or Continue with local changes? (A/C): " choice
-                case "$choice" in
-                    [Aa]* ) echo -e "${RED}[AVRE] 🛑 Boot abortado.${NC}"; exit 1;;
-                    [Cc]* ) echo -e "${WHITE}[AVRE] ❤️ Continuando com as alteracoes locais...${NC}"; break;;
-                    * ) echo -e "${WHITE}[AVRE] Por favor, responda A ou C.${NC}";;
-                esac
-            done
+            if ! git pull origin dev/version2_1 > /dev/null 2>&1; then
+                echo -e "${DIM_RED}[AVRE] 🥀 Check this... Sync failed in $repo.${NC}"
+                while true; do
+                    read -p "Abort boot or Continue with local changes? (A/C): " choice
+                    case "$choice" in
+                        [Aa]* ) echo -e "${RED}[AVRE] 🛑 Boot abortado.${NC}"; exit 1;;
+                        [Cc]* ) echo -e "${WHITE}[AVRE] ❤️ Continuando com as alteracoes locais...${NC}"; break;;
+                        * ) echo -e "${WHITE}[AVRE] Por favor, responda A ou C.${NC}";;
+                    esac
+                done
+            else
+                echo -e "${RED}[AVRE] ❤️ $repo sincronizado.${NC}"
+            fi
         else
-            echo -e "${RED}[AVRE] ❤️ $repo sincronizado.${NC}"
+            # Tentar checkout na main, se falhar tenta na master
+            if ! git checkout main 2>/dev/null; then
+                git checkout master 2>/dev/null
+            fi
+
+            # Tentar pull
+            if ! git pull > /dev/null 2>&1; then
+                echo -e "${DIM_RED}[AVRE] 🥀 Check this... Sync failed in $repo.${NC}"
+                while true; do
+                    read -p "Abort boot or Continue with local changes? (A/C): " choice
+                    case "$choice" in
+                        [Aa]* ) echo -e "${RED}[AVRE] 🛑 Boot abortado.${NC}"; exit 1;;
+                        [Cc]* ) echo -e "${WHITE}[AVRE] ❤️ Continuando com as alteracoes locais...${NC}"; break;;
+                        * ) echo -e "${WHITE}[AVRE] Por favor, responda A ou C.${NC}";;
+                    esac
+                done
+            else
+                echo -e "${RED}[AVRE] ❤️ $repo sincronizado.${NC}"
+            fi
         fi
 
         cd ..

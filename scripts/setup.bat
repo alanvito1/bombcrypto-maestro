@@ -49,17 +49,6 @@ for %%d in (%DIRS%) do (
     )
 )
 
-rem --- WebGL Asset Injection ---
-echo %CYAN%[AVRE] 🌹 Checking for WebGL assets in /game-assets/webgl/...%NC%
-if exist ".\game-assets\webgl" (
-    echo %GREEN%[AVRE] ❤️ WebGL assets found! Injecting into bombcrypto-client-v2...%NC%
-    if not exist "bombcrypto-client-v2\unity-web-template\public\webgl\build" mkdir "bombcrypto-client-v2\unity-web-template\public\webgl\build"
-    xcopy /e /y /i ".\game-assets\webgl\*" "bombcrypto-client-v2\unity-web-template\public\webgl\build\" > nul
-) else (
-    echo %RED%[AVRE] ⚠️ WARNING: WebGL assets not found in /game-assets/webgl/. Game will not render.%NC%
-)
-rem -----------------------------
-
 rem Use Vite .env.local trick for Unity WebGL Client to bypass config conflicts
 echo %CYAN%Creating .env.local for Client with VITE_API_HOST and Unity config...%NC%
 (

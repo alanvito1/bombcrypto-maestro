@@ -32,25 +32,44 @@ for %%r in (%REPOS%) do (
         echo %WHITE%[AVRE] 📂 Verificando %%r...%NC%
         cd "%%r"
 
-        rem Tentar checkout na main, se falhar tenta na master
-        git checkout main >nul 2>&1
-        if errorlevel 1 (
-            git checkout master >nul 2>&1
-        )
+        if "%%r" == "bombcrypto-client-v2" (
+            git fetch >nul 2>&1
+            git checkout dev/version2_1 >nul 2>&1
 
-        rem Tentar pull
-        git pull >nul 2>&1
-        if errorlevel 1 (
-            echo %DIM_RED%[AVRE] 🥀 Check this... Sync failed in %%r.%NC%
-            choice /C AC /M "Abort boot or Continue with local changes? (A/C)"
-            if errorlevel 2 (
-                echo %WHITE%[AVRE] ❤️ Continuando com as alteracoes locais...%NC%
+            git pull origin dev/version2_1 >nul 2>&1
+            if errorlevel 1 (
+                echo %DIM_RED%[AVRE] 🥀 Check this... Sync failed in %%r.%NC%
+                choice /C AC /M "Abort boot or Continue with local changes? (A/C)"
+                if errorlevel 2 (
+                    echo %WHITE%[AVRE] ❤️ Continuando com as alteracoes locais...%NC%
+                ) else (
+                    echo %RED%[AVRE] 🛑 Boot abortado.%NC%
+                    exit /b 1
+                )
             ) else (
-                echo %RED%[AVRE] 🛑 Boot abortado.%NC%
-                exit /b 1
+                echo %RED%[AVRE] ❤️ %%r sincronizado.%NC%
             )
         ) else (
-            echo %RED%[AVRE] ❤️ %%r sincronizado.%NC%
+            rem Tentar checkout na main, se falhar tenta na master
+            git checkout main >nul 2>&1
+            if errorlevel 1 (
+                git checkout master >nul 2>&1
+            )
+
+            rem Tentar pull
+            git pull >nul 2>&1
+            if errorlevel 1 (
+                echo %DIM_RED%[AVRE] 🥀 Check this... Sync failed in %%r.%NC%
+                choice /C AC /M "Abort boot or Continue with local changes? (A/C)"
+                if errorlevel 2 (
+                    echo %WHITE%[AVRE] ❤️ Continuando com as alteracoes locais...%NC%
+                ) else (
+                    echo %RED%[AVRE] 🛑 Boot abortado.%NC%
+                    exit /b 1
+                )
+            ) else (
+                echo %RED%[AVRE] ❤️ %%r sincronizado.%NC%
+            )
         )
 
         cd ..
