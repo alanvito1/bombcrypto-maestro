@@ -33,18 +33,18 @@ for %%r in (%REPOS%) do (
         cd "%%r"
 
         rem 🐙 FAIL-SAFE GIT SYNC: Clean any uncommitted changes or untracked files
-        git checkout . >nul 2>&1
-        git clean -fd >nul 2>&1
+        git checkout .
+        git clean -fd
 
         if "%%r" == "bombcrypto-client-v2" (
-            git fetch >nul 2>&1
-            git checkout dev/version2_1 >nul 2>&1
+            git fetch
+            git checkout dev/version2_1
 
-            git pull origin dev/version2_1 >nul 2>&1
-            if errorlevel 1 (
+            git pull origin dev/version2_1
+            if !errorlevel! neq 0 (
                 echo %DIM_RED%[AVRE] 🥀 Check this... Sync failed in %%r.%NC%
                 choice /C AC /M "Abort boot or Continue with local changes? (A/C)"
-                if errorlevel 2 (
+                if !errorlevel! equ 2 (
                     echo %WHITE%[AVRE] ❤️ Continuando com as alteracoes locais...%NC%
                 ) else (
                     echo %RED%[AVRE] 🛑 Boot abortado.%NC%
@@ -55,17 +55,17 @@ for %%r in (%REPOS%) do (
             )
         ) else (
             rem Tentar checkout na main, se falhar tenta na master
-            git checkout main >nul 2>&1
-            if errorlevel 1 (
-                git checkout master >nul 2>&1
+            git checkout main
+            if !errorlevel! neq 0 (
+                git checkout master
             )
 
             rem Tentar pull
-            git pull >nul 2>&1
-            if errorlevel 1 (
+            git pull
+            if !errorlevel! neq 0 (
                 echo %DIM_RED%[AVRE] 🥀 Check this... Sync failed in %%r.%NC%
                 choice /C AC /M "Abort boot or Continue with local changes? (A/C)"
-                if errorlevel 2 (
+                if !errorlevel! equ 2 (
                     echo %WHITE%[AVRE] ❤️ Continuando com as alteracoes locais...%NC%
                 ) else (
                     echo %RED%[AVRE] 🛑 Boot abortado.%NC%
