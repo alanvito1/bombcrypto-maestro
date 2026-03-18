@@ -59,6 +59,20 @@ echo -e "${CYAN}----------------------------------------${NC}"
 echo -e "${CYAN}🔧 Passo 2: Configurando variaveis de ambiente...${NC}"
 ./scripts/init-bomb.sh
 
+# 2.5 Fix CRLF line endings on Server Deploy scripts for Windows compatibility
+echo -e "${CYAN}----------------------------------------${NC}"
+echo -e "${CYAN}🐧 Passo 2.5: Corrigindo quebras de linha (CRLF para LF) nos scripts do servidor...${NC}"
+if [ -d "bombcrypto-server-v2/server/deploy" ]; then
+    if sed --version >/dev/null 2>&1; then
+        find bombcrypto-server-v2/server/deploy -type f -name "*.sh" -exec sed -i 's/\r$//' {} +
+    else
+        find bombcrypto-server-v2/server/deploy -type f -name "*.sh" -exec sed -i '' 's/\r$//' {} +
+    fi
+    echo -e "${GREEN}✅ Scripts .sh do servidor convertidos para formato Linux.${NC}"
+else
+    echo -e "${CYAN}Diretorio de deploy do servidor não encontrado, pulando...${NC}"
+fi
+
 # 3. Subir infraestrutura Base (Bancos, Hardhat, Server, Market, etc)
 echo -e "${CYAN}----------------------------------------${NC}"
 echo -e "${CYAN}🐳 Passo 3: Subindo containers Docker...${NC}"

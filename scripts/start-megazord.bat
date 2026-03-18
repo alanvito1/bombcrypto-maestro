@@ -55,6 +55,15 @@ echo %CYAN%🔧 Passo 2: Configurando variaveis de ambiente...%NC%
 call scripts\setup.bat
 
 echo %CYAN%----------------------------------------%NC%
+echo %CYAN%🐧 Passo 2.5: Corrigindo quebras de linha (CRLF para LF) nos scripts do servidor...%NC%
+if exist "bombcrypto-server-v2\server\deploy\" (
+    powershell -Command "Get-ChildItem -Path 'bombcrypto-server-v2\server\deploy' -Filter '*.sh' -Recurse | ForEach-Object { $content = [System.IO.File]::ReadAllText($_.FullName); $content = $content -replace \"`r`n\", \"`n\"; [System.IO.File]::WriteAllText($_.FullName, $content) }"
+    echo %GREEN%✅ Scripts .sh do servidor convertidos para formato Linux.%NC%
+) else (
+    echo %CYAN%Diretorio de deploy do servidor não encontrado, pulando...%NC%
+)
+
+echo %CYAN%----------------------------------------%NC%
 echo %CYAN%🐳 Passo 3: Subindo containers Docker...%NC%
 docker compose up -d
 
