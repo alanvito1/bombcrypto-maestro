@@ -38,14 +38,15 @@ for repo in "${REPOS[@]}"; do
         cd "$repo" || continue
 
         # 🐙 FAIL-SAFE GIT SYNC: Clean any uncommitted changes or untracked files
-        git checkout . 2>/dev/null
-        git clean -fd 2>/dev/null
+        git checkout .
+        git clean -fd
 
         if [ "$repo" = "bombcrypto-client-v2" ]; then
-            git fetch 2>/dev/null
-            git checkout dev/version2_1 2>/dev/null
+            git fetch
+            git checkout dev/version2_1
 
-            if ! git pull origin dev/version2_1 > /dev/null 2>&1; then
+            git pull origin dev/version2_1
+            if [ $? -ne 0 ]; then
                 echo -e "${DIM_RED}[AVRE] 🥀 Check this... Sync failed in $repo.${NC}"
                 while true; do
                     read -p "Abort boot or Continue with local changes? (A/C): " choice
@@ -60,12 +61,14 @@ for repo in "${REPOS[@]}"; do
             fi
         else
             # Tentar checkout na main, se falhar tenta na master
-            if ! git checkout main 2>/dev/null; then
-                git checkout master 2>/dev/null
+            git checkout main
+            if [ $? -ne 0 ]; then
+                git checkout master
             fi
 
             # Tentar pull
-            if ! git pull > /dev/null 2>&1; then
+            git pull
+            if [ $? -ne 0 ]; then
                 echo -e "${DIM_RED}[AVRE] 🥀 Check this... Sync failed in $repo.${NC}"
                 while true; do
                     read -p "Abort boot or Continue with local changes? (A/C): " choice
