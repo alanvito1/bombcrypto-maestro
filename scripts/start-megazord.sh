@@ -37,6 +37,10 @@ for repo in "${REPOS[@]}"; do
         echo -e "${WHITE}[AVRE] 📂 Verificando $repo...${NC}"
         cd "$repo" || continue
 
+        # 🐙 FAIL-SAFE GIT SYNC: Clean any uncommitted changes or untracked files
+        git checkout . 2>/dev/null
+        git clean -fd 2>/dev/null
+
         if [ "$repo" = "bombcrypto-client-v2" ]; then
             git fetch 2>/dev/null
             git checkout dev/version2_1 2>/dev/null
