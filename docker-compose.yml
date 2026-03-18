@@ -40,6 +40,11 @@ services:
       - ./bombcrypto-server-v2/api/login:/app
       - ap-login_node_modules:/app/node_modules
     command: sh -c "npm install && npm start"
+    environment:
+      OBFUSCATE_BYTES_APPEND: "0"
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
     ports:
       - "8120:8120"
     depends_on:
@@ -54,6 +59,10 @@ services:
       - ./bombcrypto-server-v2/api/market:/app
       - ap-market_node_modules:/app/node_modules
     command: sh -c "npm install && npm start"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
     ports:
       - "9120:9120"
     depends_on:
@@ -66,6 +75,7 @@ services:
       dockerfile: Dockerfile.arm64
     container_name: bombcrypto-sfs-game-1
     env_file: ./bombcrypto-server-v2/server/.env.example
+    command: /bin/bash -c "sed -i 's/\r$$//g' run.sh && bash run.sh"
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -110,6 +120,10 @@ services:
       - ./bombcrypto-market-v2/backend:/app
       - market-api_node_modules:/app/node_modules
     command: sh -c "npm install && npm run dev:api:bsc"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
     ports:
       - "3000:3000"
     depends_on:
@@ -124,6 +138,10 @@ services:
       - ./bombcrypto-market-v2/detect-transfer:/app
       - detect-transfer_node_modules:/app/node_modules
     command: sh -c "npm install && npm run dev"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
     depends_on:
       - postgres
       - redis
@@ -136,6 +154,10 @@ services:
       - ./bombcrypto-market-v2/blockchain-center-api:/app
       - blockchain-center_node_modules:/app/node_modules
     command: sh -c "npm install && npx nodemon server.js"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
     ports:
       - "3003:3003"
     depends_on:
