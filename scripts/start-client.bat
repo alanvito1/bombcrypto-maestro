@@ -10,4 +10,4 @@ if not exist node_modules (
 )
 
 echo Starting Vite server in background...
-start /b cmd /c npm run dev
+start /b cmd /c npm run start

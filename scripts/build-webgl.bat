@@ -9,6 +9,17 @@ set "AUTO_BUILDER=%EDITOR_DIR%\AutoBuilder.cs"
 echo Creating Editor directory if it doesn't exist...
 if not exist "%EDITOR_DIR%" mkdir "%EDITOR_DIR%"
 
+echo Checking if Unity is already running...
+tasklist /FI "IMAGENAME eq Unity.exe" 2>NUL | find /I /N "Unity.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+    echo.
+    echo [ERROR] Unity is already running with this project open.
+    echo CLOSE ALL UNITY WINDOWS BEFORE RUNNING THIS BUILD.
+    echo.
+    pause
+    exit /b 1
+)
+
 echo Starting headless Unity WebGL build...
 start /wait "" "%UNITY_PATH%" -quit -batchmode -buildTarget WebGL -nographics -projectPath "%PROJECT_PATH%" -executeMethod AutoBuilder.BuildWebGL -logFile "%LOG_FILE%"
 set BUILD_CMD_RESULT=%ERRORLEVEL%
