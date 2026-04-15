@@ -1,0 +1,35 @@
+FROM openjdk:11-slim
+
+# Forward ports
+EXPOSE 8080 8443 9933/tcp 9933/udp 9898
+
+RUN apt-get update && apt-get install -y \
+    unzip \
+    wget \
+    tar \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# SMARTFOX SETUP
+ARG SMARTFOX_VERSION=2_19_0
+ARG SMARTFOX_PATCH_VERSION=2.20.5
+
+WORKDIR /opt
+# Use submodule installer as source
+COPY ./bombcrypto-server-v2/server/deploy/installer /opt/installer
+
+# Extract and Patch
+RUN tar -C /opt -xzvf /opt/installer/SFS2X_unix_${SMARTFOX_VERSION}.tar.gz
+RUN unzip /opt/installer/SFS2X-Patch-${SMARTFOX_PATCH_VERSION}.zip -d /opt/SmartFoxServer_2X/
+WORKDIR /opt/SmartFoxServer_2X/SFS2X-Patch-${SMARTFOX_PATCH_VERSION}
+RUN java -jar patcher.jar "SFS2X ${SMARTFOX_PATCH_VERSION} Patch Installer"
+
+# Set up runtime
+WORKDIR /opt/SmartFoxServer_2X/SFS2X
+RUN cp /opt/installer/run.sh . && chmod +x run.sh
+RUN cp /opt/installer/sfs2x.sh . && chmod +x sfs2x.sh
+
+# Mount extension zones and config from submodule
+# Note: These will be mounted via volumes in docker-compose for zero-touch updates
+VOLUME ["/opt/SmartFoxServer_2X/SFS2X/extensions", "/opt/SmartFoxServer_2X/SFS2X/zones", "/opt/SmartFoxServer_2X/SFS2X/config"]
+
+CMD ["./run.sh"]
