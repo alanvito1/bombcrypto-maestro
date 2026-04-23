@@ -91,7 +91,7 @@ done
 
 # 2. Configurar variaveis de ambiente (.env)
 echo -e "${RED}----------------------------------------${NC}"
-echo -e "${WHITE}[AVRE] 🔧 Passo 2: Configurando variaveis de ambiente...${NC}"
+echo -e "${WHITE}[AVRE] 🔧 Passo 2: Configurando variaveis de ambiente na raiz (Central Control Panel)...${NC}"
 ./scripts/init-bomb.sh
 
 # 2.5 Fix CRLF line endings on Server Deploy scripts for Windows compatibility
@@ -108,55 +108,23 @@ else
     echo -e "${DIM_RED}[AVRE] 🥀 Diretorio de deploy do servidor não encontrado, pulando...${NC}"
 fi
 
+# Load port variables to display later
+if [ -f ".env" ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+FRONTEND_PORT=${MARKET_FRONTEND_PORT:-5175}
+
 # 3. Subir infraestrutura Base (Bancos, Hardhat, Server, Market, etc)
 echo -e "${RED}----------------------------------------${NC}"
 echo -e "${WHITE}[AVRE] 🐳 Passo 3: Subindo containers Docker...${NC}"
 docker compose up -d
 
-# Funcao de Graceful Shutdown
-cleanup() {
-    echo ""
-    echo -e "${DIM_RED}[AVRE] 🛑 Detectado sinal de interrupcao (Ctrl+C). Iniciando Graceful Shutdown...${NC}"
-
-    # Derrubar processo do Client (Vite)
-    if [ -n "$CLIENT_PID" ]; then
-        echo -e "${RED}[AVRE] 🔪 Encerrando Client WebGL (PID: $CLIENT_PID)...${NC}"
-        kill $CLIENT_PID 2>/dev/null
-    fi
-
-    # Desligar todos os containers do docker-compose
-    echo -e "${RED}[AVRE] 🐳 Desligando infraestrutura Docker...${NC}"
-    docker compose down
-
-    echo -e "${WHITE}[AVRE] ❤️ Shutdown concluido com seguranca. Ate a proxima!${NC}"
-    exit 0
-}
-
-# 4. Registrar o Trap para capturar sinais de termino (SIGINT / SIGTERM)
-trap cleanup SIGINT SIGTERM
-
-# 5. Iniciar o Frontend do Client Unity WebGL (em background para nao travar o terminal)
 echo -e "${RED}----------------------------------------${NC}"
-echo -e "${WHITE}[AVRE] 🎮 Passo 4: Inicializando o Client Unity WebGL (Vite)...${NC}"
-
-cd bombcrypto-client-v2/unity-web-template
-
-echo -e "${WHITE}[AVRE] 📦 Verificando dependencias do Client...${NC}"
-npm install --silent > /dev/null 2>&1
-
-echo -e "${RED}[AVRE] ❤️ Iniciando Vite na porta 5174...${NC}"
-npm run start --silent -- --port 5174 > /dev/null 2>&1 &
-CLIENT_PID=$!
-
-cd ../..
-
+echo -e "${RED}[AVRE] ❤️ Orchestration successful${NC}"
 echo -e "${RED}----------------------------------------${NC}"
-echo -e "${RED}[AVRE] ❤️ Build successful${NC}"
+echo -e "${WHITE}🌐 Base Infrastructure Started!${NC}"
+echo -e "${WHITE}🌐 Market Frontend (if enabled): http://localhost:${FRONTEND_PORT}${NC}"
+echo -e "${WHITE}🎮 Note: The Unity WebGL client is separate. Please check /docs/CLIENT_COMPILATION_MANUAL.md for instructions.${NC}"
+echo -e "${WHITE}🎮 Start the client with: ./scripts/start-client.sh${NC}"
 echo -e "${RED}----------------------------------------${NC}"
-echo -e "${WHITE}🌐 Market Frontend: http://localhost:5173${NC}"
-echo -e "${WHITE}🎮 Client WebGL:    http://localhost:5174${NC}"
-echo -e "${RED}⚙️  Pressione Ctrl+C para desligar todo o ecossistema.${NC}"
-echo -e "${RED}----------------------------------------${NC}"
-
-# 6. Manter o terminal vivo aguardando o processo do Client
-wait $CLIENT_PID

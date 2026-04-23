@@ -22,14 +22,22 @@ echo %WHITE%[AVRE] 🐳 Stopping Docker containers and removing volumes...%NC%
 cd /d "%~dp0\.."
 docker compose down -v
 
-echo %WHITE%[AVRE] 🌐 Killing Zombie Market Frontend processes (Vite) on port 5173...%NC%
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5173 " ^| findstr "LISTENING"') do (
+if exist ".env" (
+    for /f "tokens=1,2 delims==" %%a in (.env) do (
+        set "%%a=%%b"
+    )
+)
+if not defined MARKET_FRONTEND_PORT set "MARKET_FRONTEND_PORT=5175"
+if not defined CLIENT_VITE_PORT set "CLIENT_VITE_PORT=5176"
+
+echo %WHITE%[AVRE] 🌐 Killing Zombie Market Frontend processes (Vite) on port %MARKET_FRONTEND_PORT%...%NC%
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":%MARKET_FRONTEND_PORT% " ^| findstr "LISTENING"') do (
     taskkill /F /PID %%a >nul 2>&1
     if !errorlevel! equ 0 echo %RED%[AVRE] ❤️ Killed process %%a.%NC%
 )
 
-echo %WHITE%[AVRE] 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port 5174...%NC%
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5174 " ^| findstr "LISTENING"') do (
+echo %WHITE%[AVRE] 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port %CLIENT_VITE_PORT%...%NC%
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":%CLIENT_VITE_PORT% " ^| findstr "LISTENING"') do (
     taskkill /F /PID %%a >nul 2>&1
     if !errorlevel! equ 0 echo %RED%[AVRE] ❤️ Killed process %%a.%NC%
 )
