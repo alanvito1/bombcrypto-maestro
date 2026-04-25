@@ -1,16 +1,20 @@
 [submodule "bombcrypto-client-v2"]
 	path = bombcrypto-client-v2
-	url = https://github.com/alanvito1/bombcrypto-client-v2.git
+	url = https://github.com/Senspark/bombcrypto-client-v2.git
+	branch = master
 [submodule "bombcrypto-contract-v2"]
 	path = bombcrypto-contract-v2
-	url = https://github.com/alanvito1/bombcrypto-contract-v2.git
+	url = https://github.com/Senspark/bombcrypto-contract-v2.git
+	branch = main
 [submodule "bombcrypto-market-v2"]
 	path = bombcrypto-market-v2
-	url = https://github.com/alanvito1/bombcrypto-market-v2.git
+	url = https://github.com/Senspark/bombcrypto-market-v2.git
+	branch = master
 [submodule "bombcrypto-server-v2"]
 	path = bombcrypto-server-v2
-	url = https://github.com/alanvito1/bombcrypto-server-v2.git
+	url = https://github.com/Senspark/bombcrypto-server-v2.git
+	branch = main
 [submodule "bombcrypto-api-v2"]
 	path = bombcrypto-api-v2
-	url = https://github.com/alanvito1/bombcrypto-api-v2.git
+	url = https://github.com/Senspark/bombcrypto-api-v2.git
 	branch = main
