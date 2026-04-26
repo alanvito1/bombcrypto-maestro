@@ -5,14 +5,15 @@ services:
   postgres:
     image: postgres:17
     container_name: bombcrypto-postgres
+    env_file: .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,24 +27,28 @@ services:
     image: redis:8
     container_name: bombcrypto-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
 
   hardhat-node:
+    profiles: ["contract"]
     image: node:22-bullseye
     container_name: bombcrypto-hardhat
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-contract-v2/base-hardhat:/app
       - hardhat-node_modules:/app/node_modules
       - ./scripts/mock-hardhat-env.json:/app/env.json
     command: sh -c "npm install --ignore-scripts && npx hardhat node"
     ports:
-      - "8545:8545"
+      - "${HARDHAT_PORT:-8545}:8545"
 
   ap-login:
+    profiles: ["server"]
     image: node:22-bullseye
     container_name: bombcrypto-ap-login
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-server-v2/api/login:/app
       - ap-login_node_modules:/app/node_modules
@@ -51,13 +56,17 @@ services:
     environment:
       OBFUSCATE_BYTES_APPEND: "0"
       DB_HOST: postgres
-      POSTGRES_CONNECTION_STRING_BACKEND: postgresql://postgres:password@postgres:5432/backend
-      POSTGRES_CONNECTION_STRING_BOMBCRYPTO: postgresql://postgres:password@postgres:5432/bombcrypto2
+      POSTGRES_CONNECTION_STRING_BACKEND: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/backend
+      POSTGRES_CONNECTION_STRING_BOMBCRYPTO: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/bombcrypto2
       REDIS_CONNECTION_STRING: redis://redis:6379
       REDIS_HOST: redis
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-postgres}"
+      JWT_LOGIN_SECRET: ${JWT_LOGIN_SECRET}
+      JWT_BEARER_SECRET: ${JWT_BEARER_SECRET}
+      AP_LOGIN_TOKEN: ${AP_LOGIN_TOKEN}
+      AES_SECRET: ${AES_SECRET}
     ports:
-      - "8120:8120"
+      - "${AP_LOGIN_PORT:-8120}:8120"
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,9 +74,11 @@ services:
         condition: service_started
 
   ap-market:
+    profiles: ["market"]
     image: node:22-bullseye
     container_name: bombcrypto-ap-market
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-server-v2/api/market:/app
       - ap-market_node_modules:/app/node_modules
@@ -75,9 +86,10 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-postgres}"
+      JWT_BEARER_SECRET: ${JWT_BEARER_SECRET}
     ports:
-      - "9120:9120"
+      - "${AP_MARKET_PORT:-9120}:9120"
     depends_on:
       postgres:
         condition: service_healthy
@@ -85,18 +97,19 @@ services:
         condition: service_started
 
   sfs-game-1:
+    profiles: ["server"]
     build:
       context: ./bombcrypto-server-v2/server/deploy
       dockerfile: Dockerfile.arm64
     container_name: bombcrypto-sfs-game-1
-    env_file: ./bombcrypto-server-v2/server/.env.example
+    env_file: .env
     command: /bin/bash -c "find . -type f -name '*.sh' -exec sed -i 's/\r$$//g' {} + && bash run.sh"
     ports:
-      - "8080:8080"
-      - "8443:8443"
-      - "9933:9933/tcp"
-      - "9933:9933/udp"
-      - "9898:9898"
+      - "${SFS_HTTP_PORT:-8080}:8080"
+      - "${SFS_HTTPS_PORT:-8443}:8443"
+      - "${SFS_TCP_PORT:-9933}:9933/tcp"
+      - "${SFS_UDP_PORT:-9933}:9933/udp"
+      - "${SFS_ADMIN_PORT:-9898}:9898"
     environment:
       IS_DEBUG: "1"
       IS_PVP_SERVER: "0"
@@ -108,6 +121,10 @@ services:
       SERVER_NAME: 'sfs-game-1'
       LICENSE_CODE: ''
       CREDENTIALS: 'bombcryptodev,123456'
+      JWT_LOGIN_SECRET: ${JWT_LOGIN_SECRET}
+      JWT_BEARER_SECRET: ${JWT_BEARER_SECRET}
+      AP_LOGIN_TOKEN: ${AP_LOGIN_TOKEN}
+      AES_SECRET: ${AES_SECRET}
     depends_on:
       - postgres
       - redis
@@ -117,22 +134,27 @@ services:
       - ./extensions_volume:/opt/SmartFoxServer_2X/SFS2X/extensions:rw
 
   market-frontend:
+    profiles: ["market"]
     image: node:22-bullseye
     container_name: bombcrypto-market-frontend
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-market-v2/frontend:/app
       - market-frontend_node_modules:/app/node_modules
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     environment:
-      VITE_API_HOST: "http://localhost:8120/web"
+      VITE_API_HOST: "http://localhost:${AP_LOGIN_PORT:-8120}/web"
+      VITE_MARKET_API_HOST: "http://localhost:${MARKET_API_PORT:-3000}"
     ports:
-      - "5173:5173"
+      - "${MARKET_FRONTEND_PORT:-5173}:5173"
 
   market-api:
+    profiles: ["market"]
     image: node:22-bullseye
     container_name: bombcrypto-market-api
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-market-v2/backend:/app
       - market-api_node_modules:/app/node_modules
@@ -140,10 +162,10 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
-      POSTGRES_CONN_STR: "postgresql://postgres:password@postgres:5432/bombcrypto"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-postgres}"
+      POSTGRES_CONN_STR: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/bombcrypto"
     ports:
-      - "3000:3000"
+      - "${MARKET_API_PORT:-3000}:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -151,9 +173,11 @@ services:
         condition: service_started
 
   detect-transfer:
+    profiles: ["market"]
     image: node:22-bullseye
     container_name: bombcrypto-detect-transfer
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-market-v2/detect-transfer:/app
       - detect-transfer_node_modules:/app/node_modules
@@ -161,8 +185,8 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
-      POSTGRES_URL: "postgresql://postgres:password@postgres:5432/bombcrypto"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-postgres}"
+      POSTGRES_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/bombcrypto"
     depends_on:
       postgres:
         condition: service_healthy
@@ -170,9 +194,11 @@ services:
         condition: service_started
 
   blockchain-center-api:
+    profiles: ["market"]
     image: node:22-bullseye
     container_name: bombcrypto-blockchain-center
     working_dir: /app
+    env_file: .env
     volumes:
       - ./bombcrypto-market-v2/blockchain-center-api:/app
       - blockchain-center_node_modules:/app/node_modules
@@ -180,9 +206,9 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_HOST: redis
-      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-postgres}"
     ports:
-      - "3003:3003"
+      - "${BLOCKCHAIN_CENTER_PORT:-3003}:3003"
     depends_on:
       postgres:
         condition: service_healthy

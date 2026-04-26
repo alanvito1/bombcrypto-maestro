@@ -8,8 +8,26 @@ echo "🩺 MEGAZORD DOCTOR: Health Diagnostics & Pre-Flight Checks 🩺"
 echo "=========================================================="
 echo ""
 
+if [ -f ".env" ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+# Gather ports dynamically or fallback
+DB_PORT=${POSTGRES_PORT:-5433}
+REDIS_P=${REDIS_PORT:-6380}
+HARDHAT_P=${HARDHAT_PORT:-8546}
+AP_LOGIN_P=${AP_LOGIN_PORT:-8121}
+AP_MARKET_P=${AP_MARKET_PORT:-9121}
+MARKET_API_P=${MARKET_API_PORT:-3001}
+BC_CENTER_P=${BLOCKCHAIN_CENTER_PORT:-3004}
+SFS_HTTP_P=${SFS_HTTP_PORT:-8081}
+SFS_HTTPS_P=${SFS_HTTPS_PORT:-8444}
+SFS_TCP_P=${SFS_TCP_PORT:-9934}
+FRONTEND_P=${MARKET_FRONTEND_PORT:-5175}
+CLIENT_P=${CLIENT_VITE_PORT:-5176}
+
 # Ports to check before starting
-PORTS_TO_CHECK=(5432 6379 8545 8120 9120 3000 3003 8080 8443 9933 5173 5174)
+PORTS_TO_CHECK=($DB_PORT $REDIS_P $HARDHAT_P $AP_LOGIN_P $AP_MARKET_P $MARKET_API_P $BC_CENTER_P $SFS_HTTP_P $SFS_HTTPS_P $SFS_TCP_P $FRONTEND_P $CLIENT_P)
 
 echo "🔍 PRE-FLIGHT: Checking for occupied ports..."
 OCCUPIED_PORTS=0
