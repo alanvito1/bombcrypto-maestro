@@ -27,8 +27,15 @@ if not exist "%BUILD_PATH%\Build" (
 echo [4/5] Starting Frontend Client Wrapper...
 call "%SCRIPTS_DIR%\start-client.bat"
 
+if exist ".env" (
+    for /f "tokens=1,2 delims==" %%a in (.env) do (
+        set "%%a=%%b"
+    )
+)
+if not defined CLIENT_VITE_PORT set "CLIENT_VITE_PORT=5176"
+
 echo [5/5] Opening browser...
-start http://localhost:5174
+start http://localhost:%CLIENT_VITE_PORT%
 
 echo.
 echo ================================================================

@@ -83,7 +83,7 @@ for %%r in (%REPOS%) do (
 )
 
 echo %RED%----------------------------------------%NC%
-echo %WHITE%[AVRE] 🔧 Passo 2: Configurando variaveis de ambiente...%NC%
+echo %WHITE%[AVRE] 🔧 Passo 2: Configurando variaveis de ambiente na raiz (Central Control Panel)...%NC%
 call scripts\setup.bat
 
 echo %RED%----------------------------------------%NC%
@@ -95,27 +95,23 @@ if exist "bombcrypto-server-v2\server\deploy\" (
     echo %DIM_RED%[AVRE] 🥀 Diretorio de deploy do servidor não encontrado, pulando...%NC%
 )
 
+rem Load port variables to display later
+if exist ".env" (
+    for /f "tokens=1,2 delims==" %%a in (.env) do (
+        set "%%a=%%b"
+    )
+)
+if not defined MARKET_FRONTEND_PORT set "MARKET_FRONTEND_PORT=5175"
+
 echo %RED%----------------------------------------%NC%
 echo %WHITE%[AVRE] 🐳 Passo 3: Subindo containers Docker...%NC%
 docker compose up -d
 
 echo %RED%----------------------------------------%NC%
-echo %WHITE%[AVRE] 🎮 Passo 4: Inicializando o Client Unity WebGL (Vite)...%NC%
-
-cd bombcrypto-client-v2\unity-web-template
-
-echo %WHITE%[AVRE] 📦 Verificando dependencias do Client...%NC%
-call npm install --silent >nul 2>&1
-
-echo %RED%[AVRE] ❤️ Iniciando Vite na porta 5174...%NC%
-start "Vite - Client WebGL" cmd /c "npm run start --silent -- --port 5174 >nul 2>&1"
-
-cd ..\..
-
+echo %RED%[AVRE] ❤️ Orchestration successful%NC%
 echo %RED%----------------------------------------%NC%
-echo %RED%[AVRE] ❤️ Build successful%NC%
-echo %RED%----------------------------------------%NC%
-echo %WHITE%🌐 Market Frontend: http://localhost:5173%NC%
-echo %WHITE%🎮 Client WebGL:    http://localhost:5174%NC%
-echo %RED%⚙️  Execute clean-megazord.bat ou docker compose down para desligar.%NC%
+echo %WHITE%🌐 Base Infrastructure Started!%NC%
+echo %WHITE%🌐 Market Frontend (if enabled): http://localhost:%MARKET_FRONTEND_PORT%%NC%
+echo %WHITE%🎮 Note: The Unity WebGL client is separate. Please check /docs/CLIENT_COMPILATION_MANUAL.md for instructions.%NC%
+echo %WHITE%🎮 Start the client with: scripts\start-client.bat%NC%
 echo %RED%----------------------------------------%NC%
