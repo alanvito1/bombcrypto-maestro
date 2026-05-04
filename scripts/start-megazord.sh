@@ -15,10 +15,11 @@ NC='\033[0m' # No Color
 # 🌹 AVRE INITIATION SEQUENCE
 # ==========================================
 echo -e "${RED}==========================================${NC}"
-echo -e "${WHITE}    db    Y88b  /  88888b  888888 ${NC}"
-echo -e "${WHITE}   dPYb    Y88 /   88   88 88__   ${NC}"
-echo -e "${WHITE}  dP__Yb    Y8/    88   88 88\"\"   ${NC}"
-echo -e "${WHITE} dP\"\"\"\"Yb    Y     88888P  888888 ${NC}"
+echo -e "${WHITE}   __  __ _____ ____    _   _____ ___  ____  ____    ${NC}"
+echo -e "${WHITE}  |  \/  |  ___/ ___|  / \ |__  // _ \|  _ \|  _ \   ${NC}"
+echo -e "${WHITE}  | |\/| | |_ | |  _  / _ \  / /| | | | |_) | | | |  ${NC}"
+echo -e "${WHITE}  | |  | |  _|| |_| |/ ___ \/ /_| |_| |  _ <| |_| |  ${NC}"
+echo -e "${WHITE}  |_|  |_|_|   \____/_/   \_\____\___/|_| \_\____/   ${NC}"
 echo -e "${RED}==========================================${NC}"
 echo -e "${WHITE}[AVRE] 🌹 System active...${NC}"
 echo -e "${WHITE}[AVRE] 🌹 Iniciando a sequencia de boot do ecossistema Bomb Crypto V2...${NC}"
@@ -30,7 +31,7 @@ cd "$(dirname "$0")/.."
 echo -e "${RED}----------------------------------------${NC}"
 echo -e "${WHITE}[AVRE] 🔄 Passo 1: Sincronizando Sub-repositorios (Pre-Flight Sync)...${NC}"
 
-REPOS=("bombcrypto-client-v2" "bombcrypto-server-v2" "bombcrypto-market-v2")
+REPOS=("bombcrypto-client-v2" "bombcrypto-server-v2" "bombcrypto-market-v2" "bombcrypto-contract-v2" "bombcrypto-api-v2")
 
 for repo in "${REPOS[@]}"; do
     if [ -d "$repo" ]; then

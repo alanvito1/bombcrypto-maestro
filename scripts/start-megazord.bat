@@ -14,10 +14,11 @@ set "DIM_RED=%ESC%[0;31m"
 set "NC=%ESC%[0m"
 
 echo %RED%==========================================%NC%
-echo %WHITE%    db    Y88b  /  88888b  888888 %NC%
-echo %WHITE%   dPYb    Y88 /   88   88 88__   %NC%
-echo %WHITE%  dP__Yb    Y8/    88   88 88""   %NC%
-echo %WHITE% dP""""Yb    Y     88888P  888888 %NC%
+echo %WHITE%   __  __ _____ ____    _   _____ ___  ____  ____    %NC%
+echo %WHITE%  ^|  ^\/  ^|  ___/ ___^|  / \ ^|__  // _ \^|  _ \^|  _ \   %NC%
+echo %WHITE%  ^| ^|^\/^| ^| |_ ^| ^|  _  / _ \  / /^| ^| ^| ^| ^|_) ^| ^| ^| ^|  %NC%
+echo %WHITE%  ^| ^|  ^| ^|  _^|^| ^|_^| ^|/ ___ \/ /_^| ^|_^| ^|  _ ^<^| ^|_^| ^|  %NC%
+echo %WHITE%  ^|_^|  ^|_^|_^|   \____/_/   \_\____\___/^|_^| \_\____/   %NC%
 echo %RED%==========================================%NC%
 echo %WHITE%[AVRE] 🌹 System active...%NC%
 echo %WHITE%[AVRE] 🌹 Iniciando a sequencia de boot do ecossistema Bomb Crypto V2...%NC%
@@ -26,7 +27,7 @@ echo %RED%----------------------------------------%NC%
 echo %WHITE%[AVRE] 🔄 Passo 1: Sincronizando Sub-repositorios (Pre-Flight Sync)...%NC%
 cd /d "%~dp0\.."
 
-set "REPOS=bombcrypto-client-v2 bombcrypto-server-v2 bombcrypto-market-v2"
+set "REPOS=bombcrypto-client-v2 bombcrypto-server-v2 bombcrypto-market-v2 bombcrypto-contract-v2 bombcrypto-api-v2"
 for %%r in (%REPOS%) do (
     if exist "%%r\" (
         echo %WHITE%[AVRE] 📂 Verificando %%r...%NC%
