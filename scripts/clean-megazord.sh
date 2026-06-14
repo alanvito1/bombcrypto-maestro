@@ -23,24 +23,31 @@ cd "$(dirname "$0")/.."
 echo -e "${WHITE}[AVRE] 🐳 Stopping Docker containers and removing volumes...${NC}"
 docker compose down -v
 
-# 2. Kill zombie processes on port 5173 (Market Frontend)
-echo -e "${WHITE}[AVRE] 🌐 Killing Zombie Market Frontend processes (Vite) on port 5173...${NC}"
-MARKET_PID=$(lsof -t -i :5173 -sTCP:LISTEN)
+if [ -f ".env" ]; then
+    export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+FRONTEND_PORT=${MARKET_FRONTEND_PORT:-5175}
+CLIENT_PORT=${CLIENT_VITE_PORT:-5176}
+
+# 2. Kill zombie processes on port (Market Frontend)
+echo -e "${WHITE}[AVRE] 🌐 Killing Zombie Market Frontend processes (Vite) on port ${FRONTEND_PORT}...${NC}"
+MARKET_PID=$(lsof -t -i :${FRONTEND_PORT} -sTCP:LISTEN)
 if [ -n "$MARKET_PID" ]; then
     kill -9 $MARKET_PID
     echo -e "${RED}[AVRE] ❤️ Killed process $MARKET_PID.${NC}"
 else
-    echo -e "${DIM_RED}[AVRE] 🥀 No zombie process found on port 5173.${NC}"
+    echo -e "${DIM_RED}[AVRE] 🥀 No zombie process found on port ${FRONTEND_PORT}.${NC}"
 fi
 
-# 3. Kill zombie processes on port 5174 (Unity WebGL Client)
-echo -e "${WHITE}[AVRE] 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port 5174...${NC}"
-CLIENT_PID=$(lsof -t -i :5174 -sTCP:LISTEN)
+# 3. Kill zombie processes on port (Unity WebGL Client)
+echo -e "${WHITE}[AVRE] 🎮 Killing Zombie Unity WebGL Client processes (Vite) on port ${CLIENT_PORT}...${NC}"
+CLIENT_PID=$(lsof -t -i :${CLIENT_PORT} -sTCP:LISTEN)
 if [ -n "$CLIENT_PID" ]; then
     kill -9 $CLIENT_PID
     echo -e "${RED}[AVRE] ❤️ Killed process $CLIENT_PID.${NC}"
 else
-    echo -e "${DIM_RED}[AVRE] 🥀 No zombie process found on port 5174.${NC}"
+    echo -e "${DIM_RED}[AVRE] 🥀 No zombie process found on port ${CLIENT_PORT}.${NC}"
 fi
 
 # General safety check with pkill to terminate any node or vite instances
