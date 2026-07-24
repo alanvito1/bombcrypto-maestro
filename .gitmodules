@@ -18,3 +18,7 @@
 	path = bombcrypto-api-v2
 	url = https://github.com/Senspark/bombcrypto-api-v2.git
 	branch = main
+[submodule "bombcrypto-io"]
+	path = bombcrypto-io
+	url = https://github.com/Senspark/bombcrypto-io.git
+	branch = main
