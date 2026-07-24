@@ -17,6 +17,7 @@ Todos os serviços foram mapeados para evitar conflitos com o sistema operaciona
 | **Market Backend** | 3007 | **3007** | Lógica do Marketplace |
 | **Login API** | 8006 | **8006** | Autenticação centralizada |
 | **TH Server (Backend)** | 8106 | **8106** | Lógica Treasure Hunt |
+| **Landing Page (bombcrypto-io)** | 3000 | **4007** | Site institucional / marketing |
 
 ---
 
@@ -42,6 +43,7 @@ Todos os serviços foram mapeados para evitar conflitos com o sistema operaciona
     - Marketplace: [http://localhost:4005](http://localhost:4005)
     - Treasure Hunt: [http://localhost:4006](http://localhost:4006)
     - RPC Status: [http://localhost:3005/status](http://localhost:3005/status)
+    - Landing Page: [http://localhost:4007](http://localhost:4007)
 
 ---
 

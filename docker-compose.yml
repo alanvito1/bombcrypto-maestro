@@ -171,6 +171,20 @@ services:
     depends_on:
       - th-server
 
+  landing-ui:
+    image: node:18-alpine
+    container_name: maestro-landing-ui
+    working_dir: /app
+    volumes:
+      - ./bombcrypto-io:/app
+      - ./maestro.env:/app/.env
+    environment:
+      - PORT=3000
+      - BROWSER=none
+    command: ["yarn", "start"]
+    ports:
+      - "4007:3000"
+
   game-server:
     build:
       context: .
@@ -186,8 +200,10 @@ services:
       - "9933:9933"
       - "8081:8080"
     depends_on:
-      - login-api
-      - pvp-api
+      login-api:
+        condition: service_started
+      pvp-api:
+        condition: service_started
       db:
         condition: service_healthy
 

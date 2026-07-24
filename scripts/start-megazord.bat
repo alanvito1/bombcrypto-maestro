@@ -27,7 +27,7 @@ echo %RED%----------------------------------------%NC%
 echo %WHITE%[AVRE] 🔄 Passo 1: Sincronizando Sub-repositorios (Pre-Flight Sync)...%NC%
 cd /d "%~dp0\.."
 
-set "REPOS=bombcrypto-client-v2 bombcrypto-server-v2 bombcrypto-market-v2 bombcrypto-contract-v2 bombcrypto-api-v2"
+set "REPOS=bombcrypto-client-v2 bombcrypto-server-v2 bombcrypto-market-v2 bombcrypto-contract-v2 bombcrypto-api-v2 bombcrypto-io"
 for %%r in (%REPOS%) do (
     if exist "%%r\" (
         echo %WHITE%[AVRE] 📂 Verificando %%r...%NC%

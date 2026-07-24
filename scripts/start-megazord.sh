@@ -31,7 +31,7 @@ cd "$(dirname "$0")/.."
 echo -e "${RED}----------------------------------------${NC}"
 echo -e "${WHITE}[AVRE] 🔄 Passo 1: Sincronizando Sub-repositorios (Pre-Flight Sync)...${NC}"
 
-REPOS=("bombcrypto-client-v2" "bombcrypto-server-v2" "bombcrypto-market-v2" "bombcrypto-contract-v2" "bombcrypto-api-v2")
+REPOS=("bombcrypto-client-v2" "bombcrypto-server-v2" "bombcrypto-market-v2" "bombcrypto-contract-v2" "bombcrypto-api-v2" "bombcrypto-io")
 
 for repo in "${REPOS[@]}"; do
     if [ -d "$repo" ]; then
